@@ -19,7 +19,7 @@ const WhackAMole = () => {
   const [timeLeft, setTimeLeft] = useState<number>(100); // Timer state
   const [isClickable, setIsClickable] = useState<boolean>(true); // State to control clickability
   const [bestScore, setBestScore] = useState<number>(() => {
-    return Number(localStorage.getItem("bestScore")) || 0;
+    return typeof window !== 'undefined' ? Number(localStorage.getItem("bestScore")) : 0 || 0;
   });
   const [showInfo, setShowInfo] = useState<boolean>(false); // State to control info modal visibility
 
