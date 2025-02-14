@@ -19,9 +19,13 @@ const WhackAMole = () => {
   const [timeLeft, setTimeLeft] = useState<number>(100); // Timer state
   const [isClickable, setIsClickable] = useState<boolean>(true); // State to control clickability
   const [bestScore, setBestScore] = useState<number>(() => {
-    return typeof window !== 'undefined' ? Number(localStorage.getItem("bestScore")) : 0 || 0;
+    return typeof window !== "undefined"
+      ? Number(localStorage.getItem("bestScore"))
+      : 0 || 0;
   });
   const [showInfo, setShowInfo] = useState<boolean>(false); // State to control info modal visibility
+  const [showCredit, setShowCredit] = useState<boolean>(false);
+  const [showGameOverModal, setShowGameOverModal] = useState<boolean>(false); // State for game over modal
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -31,7 +35,7 @@ const WhackAMole = () => {
           if (prevTime <= 1) {
             clearInterval(interval);
             setGameOver(true);
-            alert(`Time's up! Your final score is: ${score}`);
+            setShowGameOverModal(true); // Show game over modal
             return 0;
           }
           return prevTime - 1; // Decrease time
@@ -40,7 +44,6 @@ const WhackAMole = () => {
     }
 
     return () => clearInterval(interval);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameStarted, gameOver]);
 
   useEffect(() => {
@@ -104,7 +107,7 @@ const WhackAMole = () => {
         }, 500); // Enable clicks again after a delay
       } else {
         setGameOver(true);
-        alert(`Game Over! Your final score is: ${score}`);
+        setShowGameOverModal(true); // Show game over modal
       }
     }
   };
@@ -123,14 +126,15 @@ const WhackAMole = () => {
     setGameStarted(false);
     setTimeLeft(100); // Reset timer to 100 seconds
     setMolePosition({ index: null, type: null }); // Reset mole position
+    setShowGameOverModal(false); // Hide game over modal
   };
 
   return (
     <div className="flex flex-col items-center">
       <div className="border-4 border-black p-4 bg-gray-800 rounded-lg">
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center mb-3">
           <Image
-            src="/images/megarabbit.png"
+            src="/images/megarabbit8bit.png"
             alt="Mega Rabbit"
             width={150}
             height={150}
@@ -144,10 +148,10 @@ const WhackAMole = () => {
         ) : (
           <div className="text-lg mb-4 text-white">Best Score: {bestScore}</div>
         )}
-        <div className="text-lg mb-4 text-white">Time Left: {timeLeft}s</div>
+        <div className="text-lg mb-4 text-white">Time: {timeLeft}s</div>
         {/* Display timer */}
         {!gameStarted ? (
-          <div className="flex justify-between">
+          <div className="grid grid-cols-3 gap-4 mt-10">
             <button
               onClick={startGame}
               className="bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition"
@@ -160,6 +164,13 @@ const WhackAMole = () => {
               className="bg-green-500 text-white font-semibold py-2 px-4 rounded hover:bg-green-600 transition"
             >
               Game Info
+            </button>
+
+            <button
+              onClick={() => setShowCredit(true)} // Show info modal
+              className="bg-cyan-500 text-white font-semibold py-2 px-4 rounded hover:bg-green-600 transition"
+            >
+              Credit
             </button>
           </div>
         ) : (
@@ -212,15 +223,23 @@ const WhackAMole = () => {
             ))}
           </div>
         )}
-        {gameOver && (
-          <button
-            onClick={resetGame} // Reset game when clicked
-            className="bg-red-500 text-white font-semibold py-2 px-4 rounded hover:bg-red-600 transition mt-4"
-          >
-            Back to Menu
-          </button>
-        )}
       </div>
+
+      {/* Game Over Modal */}
+      {showGameOverModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-gray-800 p-7 rounded-lg shadow-lg flex flex-col justify-center">
+            <h2 className="text-xl font-bold mb-2">Game Over</h2>
+            <p className="mb-2">Your final score is: {score}</p>
+            <button
+              onClick={resetGame} // Close game over modal and reset game
+              className="bg-red-500 text-white font-semibold py-2 px-4 rounded hover:bg-red-600 transition"
+            >
+              Back to Menu
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Information Modal */}
       {showInfo && (
@@ -257,6 +276,42 @@ const WhackAMole = () => {
             <div className="flex justify-end">
               <button
                 onClick={() => setShowInfo(false)} // Close info modal
+                className="bg-red-500 text-white font-semibold py-2 px-4 rounded hover:bg-red-600 transition"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showCredit && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-gray-800 p-7 rounded-lg shadow-lg">
+            <h2 className="text-xl font-bold mb-10">Credit</h2>
+            <div className="flex items-center mb-5 ">
+              <Image
+                src="/images/discord.png"
+                alt="Mole"
+                width={70}
+                height={70}
+                className="mr-5"
+              />
+              <span>@anakhilang5727</span>
+            </div>
+            <div className="flex items-center">
+              <Image
+                src="/images/twitter.png"
+                alt="Rabbit"
+                width={70}
+                height={70}
+                className="mr-5"
+              />
+              <span>@SapienGenZ</span>
+            </div>
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowCredit(false)} // Close info modal
                 className="bg-red-500 text-white font-semibold py-2 px-4 rounded hover:bg-red-600 transition"
               >
                 Close
