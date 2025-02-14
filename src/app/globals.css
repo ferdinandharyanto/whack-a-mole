@@ -1,6 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom animations */
+@keyframes appear {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-10%);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(10%);
+  }
+}
+
+.animate-mole, .animate-rabbit, .animate-megapass {
+  animation: appear 0.5s ease-out forwards;
+}
 
 :root {
   --background: #ffffff;
@@ -17,5 +38,5 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Press Start 2P', cursive; /* Use an 8-bit style font */
 }
